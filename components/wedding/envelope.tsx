@@ -33,7 +33,8 @@ export function Envelope({ bride, groom, date, onOpen, guestName }: EnvelopeProp
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/final-xCOTv0UGLMpmlVuFxfNWsMzSpUlM69.png')`,
+          backgroundImage:
+            "url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/final-xCOTv0UGLMpmlVuFxfNWsMzSpUlM69.png')",
         }}
       />
 
@@ -78,19 +79,29 @@ export function Envelope({ bride, groom, date, onOpen, guestName }: EnvelopeProp
                   >
                     <div className="px-6 py-8 sm:px-10 sm:py-12 md:px-14 md:py-16 text-center">
                       {guestName && (
-                        <div className="mb-4 sm:mb-5">
+                        <div className="mb-3 sm:mb-4">
                           <p
-                            className="text-[#8a7a68] text-[10px] sm:text-xs tracking-[0.2em] mb-1 sm:mb-2"
+                            className="text-[#8a7a68] text-[10px] sm:text-xs tracking-[0.2em] mb-1"
                             style={{ fontFamily: "var(--font-serif)", fontWeight: 400 }}
                           >
                             Para:
                           </p>
-                          <p
-                            className="text-[#5a4a3a] text-[34px] sm:text-[44px] md:text-[54px] font-medium leading-none"
-                            style={{ fontFamily: "var(--font-script)" }}
-                          >
-                            {guestName}
-                          </p>
+
+                          <div className="flex justify-center items-center">
+                            <p
+                              className="text-[#4f3f31] font-medium"
+                              style={{
+                                fontFamily: "var(--font-script)",
+                                fontSize: "38px",
+                                lineHeight: "1",
+                                display: "inline-block",
+                                transform: "scale(1.35)",
+                                transformOrigin: "center center",
+                              }}
+                            >
+                              {guestName}
+                            </p>
+                          </div>
                         </div>
                       )}
 

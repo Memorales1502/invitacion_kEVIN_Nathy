@@ -28,15 +28,15 @@ export function WeddingFooter({ bride, groom }: WeddingFooterProps) {
         </p>
         
         <p className="font-[family-name:var(--font-script)] text-3xl text-[#5a4a3a]">
-          Con amor,
+          Con carino,
         </p>
         <p className="font-[family-name:var(--font-script)] text-5xl md:text-6xl text-[#c9a45c] mt-3">
           {groom} & {bride}
         </p>
         
-        {/* Copyright */}
+        {/* Fecha */}
         <div className="mt-14 pt-8 border-t border-[#c9a45c]/20">
-          <p className="text-xl text-[#5a4a3a] font-medium">
+          <p className="text-3xl md:text-4xl text-[#5a4a3a] font-bold">
             01.05.2026
           </p>
         </div>

@@ -12,7 +12,6 @@ import { ScheduleSection } from "@/components/wedding/schedule-section"
 import { RsvpSection } from "@/components/wedding/rsvp-section"
 import { SaveDateSection } from "@/components/wedding/save-date-section"
 import { GiftsSection } from "@/components/wedding/gifts-section"
-import { PhotoGallery } from "@/components/wedding/photo-gallery"
 import { MessagesSection } from "@/components/wedding/messages-section"
 import { WeddingFooter } from "@/components/wedding/wedding-footer"
 
@@ -199,9 +198,6 @@ export default function WeddingInvitation() {
 
           {/* Mesa de regalos */}
           <GiftsSection gifts={WEDDING_CONFIG.gifts} />
-
-          {/* Galeria de fotos */}
-          <PhotoGallery />
 
           {/* Mensajes para los novios */}
           <MessagesSection

@@ -1,6 +1,6 @@
 "use client"
 
-import { Gift } from "lucide-react"
+import { Gift, Landmark, Wallet } from "lucide-react"
 
 interface GiftsSectionProps {
   gifts: {
@@ -11,18 +11,63 @@ interface GiftsSectionProps {
 export function GiftsSection({ gifts }: GiftsSectionProps) {
   return (
     <section className="py-16 px-4">
-      <div className="max-w-md mx-auto">
+      <div className="max-w-2xl mx-auto">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#c9a45c]/10 flex items-center justify-center">
             <Gift className="w-8 h-8 text-[#c9a45c]" />
           </div>
-          <h2 className="font-[family-name:var(--font-script)] text-4xl md:text-5xl text-[#c9a45c] mb-6">
+
+          <h2 className="font-[family-name:var(--font-script)] text-4xl md:text-5xl text-[#c9a45c] mb-8">
             Mesa de Regalos
           </h2>
-          <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-[#c9a45c]/20">
-            <p className="text-[#111111]/100 text-lg leading-relaxed whitespace-pre-line">
-              {gifts.message}
-            </p>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-[28px] p-8 md:p-10 shadow-lg border border-[#c9a45c]/20">
+            <div className="space-y-8">
+              <div>
+                <p className="text-[#111111] text-lg md:text-xl leading-relaxed">
+                  Tu presencia es nuestro mejor regalo. Si deseas hacernos un
+                  obsequio, el día del evento encontrarás un espacio destinado
+                  para recibir aportes en efectivo.
+                </p>
+              </div>
+
+              <div className="w-20 h-px bg-[#c9a45c]/40 mx-auto" />
+
+              <div className="bg-[#faf7f2] border border-[#c9a45c]/20 rounded-2xl p-6 md:p-8 text-left">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <Landmark className="w-5 h-5 text-[#c9a45c]" />
+                  <h3 className="text-[#c9a45c] uppercase tracking-[0.18em] text-sm font-medium">
+                    Transferencia bancaria
+                  </h3>
+                </div>
+
+                <div className="space-y-3 text-center">
+                  <p className="text-[#111111] text-base md:text-lg leading-relaxed">
+                    Si lo prefieres, también puedes realizar tu obsequio por
+                    medio de transferencia bancaria.
+                  </p>
+
+                  <div className="bg-white rounded-xl border border-[#c9a45c]/15 px-5 py-4 shadow-sm">
+                    <p className="text-sm uppercase tracking-[0.18em] text-[#c9a45c] mb-2">
+                      Banco Industrial
+                    </p>
+                    <p className="text-[#111111] text-xl md:text-2xl tracking-wide font-medium">
+                      7179774679
+                    </p>
+                    <p className="text-[#111111]/80 text-base mt-2">
+                      A nombre de Sandra Nathaly G.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center gap-2 text-[#111111]/70">
+                <Wallet className="w-4 h-4 text-[#c9a45c]" />
+                <p className="text-sm md:text-base">
+                  Gracias por acompañarnos en este momento tan especial.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -95,7 +95,7 @@ export function Envelope({ bride, groom, date, onOpen, guestName }: EnvelopeProp
                                 fontSize: "28px",
                                 lineHeight: "1",
                                 display: "inline-block",
-                                transform: "scale(1.35)",
+                                transform: "scale(1.15)",
                                 transformOrigin: "center center",
                               }}
                             >

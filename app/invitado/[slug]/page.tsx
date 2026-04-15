@@ -111,7 +111,7 @@ export default function GuestInvitation({ params }: { params: Promise<{ slug: st
           backgroundImage:
             "url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/final-xCOTv0UGLMpmlVuFxfNWsMzSpUlM69.png')",
           backgroundSize: "40%",   // 🔥 AQUI controlas el tamaño
-          filter: "blur(8px) brightness(1.1)",
+          filter: "blur(6px) brightness(0.9)",
           transform: "scale(1.0)", // 🔥 BAJA ESTO (lo tenías en 1.1)
         }}
       />

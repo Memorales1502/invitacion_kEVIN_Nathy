@@ -87,7 +87,7 @@ END:VCALENDAR`
           Guarda la Fecha
         </h2>
         <p className="text-[#5a4a3a]/70 mb-8">
-          No olvides nuestra celebracion, agregala a tu calendario
+          No olvides nuestra celebración, agregala a tu calendario
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

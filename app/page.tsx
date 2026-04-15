@@ -62,7 +62,7 @@ const WEDDING_CONFIG = {
 
   // Mesa de regalos
   gifts: {
-    message: "Tu presencia es nuestro mejor regalo; sin embargo, si deseas obsequiarnos algo, el dia del evento encontraras un espacio destinado para recibir aportes en efectivo.",
+    message: "Tu presencia es nuestro mejor regalo; sin embargo, si deseas obsequiarnos algo, el día del evento encontrarás un espacio destinado para recibir aportes en efectivo.\n\nAsimismo, si lo prefieres, puedes realizar una transferencia a la cuenta monetaria de Banco Industrial No. 7179774679, a nombre de Sandra Nathaly G.",
   },
 
   // Itinerario del dia

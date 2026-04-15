@@ -72,9 +72,9 @@ export function CalendarSection({ date }: CalendarSectionProps) {
                 <div
                   key={index}
                   className={`
-                    aspect-square flex items-center justify-center text-sm relative
+                    aspect-square flex items-center justify-center text-base relative
                     ${day ? 'text-[#5a4a3a]' : ''}
-                    ${isWeddingDay ? 'font-bold' : ''}
+                    ${isWeddingDay ? 'font-bold' : 'font-medium'}
                   `}
                 >
                   {day && (
@@ -83,12 +83,12 @@ export function CalendarSection({ date }: CalendarSectionProps) {
                         <div className="relative w-12 h-12 flex items-center justify-center">
                           {/* Circulo dorado destacado */}
                           <div className="absolute inset-0 bg-[#c9a45c] rounded-full shadow-lg" />
-                          <span className="relative z-10 text-white font-bold text-lg">
+                          <span className="relative z-10 text-white font-bold text-xl">
                             {day}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-[#5a4a3a]/60">{day}</span>
+                        <span className="text-[#5a4a3a]">{day}</span>
                       )}
                     </>
                   )}
@@ -97,10 +97,10 @@ export function CalendarSection({ date }: CalendarSectionProps) {
             })}
           </div>
 
-          {/* Leyenda */}
+          {/* Leyenda - VIERNES resaltado y fecha grande */}
           <div className="mt-6 pt-4 border-t border-[#c9a45c]/20">
-            <p className="text-sm text-[#5a4a3a]/70">
-              {dayOfWeek}, {dayNum} de {monthText} de {year}
+            <p className="text-2xl md:text-3xl text-[#5a4a3a] font-medium">
+              <span className="font-bold text-[#c9a45c] uppercase">Viernes</span>, {dayNum} de {monthText} de {year}
             </p>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client"
 
-const DAYS_OF_WEEK = ["Dom", "Lun", "Mar", "Mie", "Jue", "Viernes", "Sab"]
+const DAYS_OF_WEEK = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"]
 const MONTHS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 
 function getDaysInMonth(year: number, month: number) {
@@ -99,7 +99,7 @@ export function CalendarSection({ date }: CalendarSectionProps) {
 
           {/* Leyenda */}
           <div className="mt-6 pt-4 border-t border-[#c9a45c]/20">
-            <p className="text-xl text-[#5a4a3a]/70">
+            <p className="text-xl text-[#5a4a3a]/90">
               {dayOfWeek}, {dayNum} de {monthText} de {year}
             </p>
           </div>

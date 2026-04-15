@@ -36,7 +36,7 @@ export function RsvpSection({ whatsapp, bride, groom }: RsvpSectionProps) {
         <h2 className="font-[family-name:var(--font-script)] text-4xl md:text-5xl text-center text-[#c9a45c] mb-4">
           Confirma tu Asistencia
         </h2>
-        <p className="text-center text-xl text-[#5a4a3a] mb-8">
+        <p className="text-center text-xl text-[#111111] mb-8">
           Por favor confirma antes del 17 de Abril de 2026
         </p>
         

@@ -33,28 +33,28 @@ export function GiftsSection({ gifts }: GiftsSectionProps) {
 
               <div className="w-20 h-px bg-[#c9a45c]/40 mx-auto" />
 
-              <div className="bg-[#faf7f2] border border-[#c9a45c]/20 rounded-2xl p-6 md:p-8 text-left">
+              <div className="bg-[#faf7f2] border border-[#c9a45c]/70 rounded-2xl p-6 md:p-8 text-left">
                 <div className="flex items-center justify-center gap-2 mb-4">
-                  <Landmark className="w-5 h-5 text-[#c9a45c]" />
+                  <Landmark className="w-5 h-5 text-[#111111]" />
                   <h3 className="text-[#c9a45c] uppercase tracking-[0.18em] text-sm font-medium">
-                    Transferencia bancaria
+                    Si lo Prefieres
                   </h3>
                 </div>
 
                 <div className="space-y-3 text-center">
                   <p className="text-[#111111] text-base md:text-lg leading-relaxed">
-                    Si lo prefieres, también puedes realizar tu obsequio por
+                    También puedes realizar tu obsequio por
                     medio de transferencia bancaria.
                   </p>
 
-                  <div className="bg-white rounded-xl border border-[#c9a45c]/15 px-5 py-4 shadow-sm">
-                    <p className="text-sm uppercase tracking-[0.18em] text-[#c9a45c] mb-2">
-                      Banco Industrial
+                  <div className="bg-white rounded-xl border border-[#111111]/100 px-5 py-4 shadow-sm">
+                    <p className="text-sm uppercase tracking-[0.18em] text-[#111111] mb-2">
+                      Banco Industrial - Cuenta Monetaria
                     </p>
                     <p className="text-[#111111] text-xl md:text-2xl tracking-wide font-medium">
                       7179774679
                     </p>
-                    <p className="text-[#111111]/80 text-base mt-2">
+                    <p className="text-[#111111]/80 text-base mt-3">
                       A nombre de Sandra Nathaly G.
                     </p>
                   </div>
@@ -64,7 +64,7 @@ export function GiftsSection({ gifts }: GiftsSectionProps) {
               <div className="flex items-center justify-center gap-2 text-[#111111]/70">
                 <Wallet className="w-4 h-4 text-[#c9a45c]" />
                 <p className="text-sm md:text-base">
-                  Gracias por acompañarnos en este momento tan especial.
+                  “Gracias por acompañarnos en este día tan especial; tu presencia es, sin duda, nuestro mejor regalo.”.
                 </p>
               </div>
             </div>

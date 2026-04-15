@@ -50,7 +50,7 @@ const WEDDING_CONFIG = {
   whatsapp: "50230811932",
   gifts: {
     message:
-      "Tu presencia es nuestro mejor regalo; sin embargo, si deseas obsequiarnos algo, el dia del evento encontraras un espacio destinado para recibir aportes en efectivo.",
+      "Tu presencia es nuestro mejor regalo; sin embargo, si deseas hacernos un obsequio, el día del evento encontrarás un espacio destinado para recibir aportes en efectivo. Asimismo, si lo prefieres, puedes realizar una transferencia a la cuenta monetaria de Banco Industrial No. 7179774679, a nombre de Sandra Nathaly G.",
   },
   schedule: [
     { time: "15:00", event: "Misa", icon: "church" },
@@ -150,7 +150,7 @@ export default function GuestInvitation({ params }: { params: Promise<{ slug: st
             <div className="mt-6 inline-flex items-center gap-2 bg-[#c9a45c]/10 px-6 py-3 rounded-full">
               <span className="text-[#5a4a3a] text-lg">
                 Invitación para{" "}
-                <strong className="text-[#c9a45c] text-2xl">{guest.passes}</strong>{" "}
+                <strong className="text-[#c9a45c] text-4xl">{guest.passes}</strong>{" "}
                 {guest.passes === 1 ? "persona" : "personas"}
               </span>
             </div>

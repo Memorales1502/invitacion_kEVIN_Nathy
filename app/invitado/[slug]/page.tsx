@@ -18,7 +18,6 @@ import { MessagesSection } from "@/components/wedding/messages-section"
 import { WeddingFooter } from "@/components/wedding/wedding-footer"
 import { getGuestBySlug } from "@/lib/guests"
 
-// Configuracion de la boda (misma que en page.tsx principal)
 const WEDDING_CONFIG = {
   bride: "Nathaly",
   groom: "Kevin",
@@ -71,7 +70,6 @@ export default function GuestInvitation({ params }: { params: Promise<{ slug: st
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  // Si no existe el invitado, mostrar 404
   if (!guest) {
     notFound()
   }
@@ -79,11 +77,7 @@ export default function GuestInvitation({ params }: { params: Promise<{ slug: st
   const handleOpenEnvelope = () => {
     setIsEnvelopeOpen(true)
     if (audioRef.current) {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true)
-      }).catch(() => {
-        console.log("[v0] Autoplay blocked by browser")
-      })
+      audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {})
     }
   }
 
@@ -100,24 +94,20 @@ export default function GuestInvitation({ params }: { params: Promise<{ slug: st
 
   return (
     <main className="min-h-screen relative overflow-hidden">
-      {/* Fondo */}
       <div
         className="fixed inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/final-xCOTv0UGLMpmlVuFxfNWsMzSpUlM69.png')`,
-          filter: 'blur(8px) brightness(1.1)',
-          transform: 'scale(1.1)',
+          filter: "blur(8px) brightness(1.1)",
+          transform: "scale(1.1)",
         }}
       />
       <div className="fixed inset-0 bg-gradient-to-b from-white/85 via-white/80 to-white/85" />
 
       <audio ref={audioRef} src={WEDDING_CONFIG.songUrl} loop />
 
-      {isEnvelopeOpen && (
-        <AudioPlayer isPlaying={isPlaying} onToggle={toggleMusic} />
-      )}
+      {isEnvelopeOpen && <AudioPlayer isPlaying={isPlaying} onToggle={toggleMusic} />}
 
-      {/* Sobre con nombre personalizado */}
       {!isEnvelopeOpen && (
         <Envelope
           bride={WEDDING_CONFIG.bride}
@@ -128,82 +118,52 @@ export default function GuestInvitation({ params }: { params: Promise<{ slug: st
         />
       )}
 
-      {/* Contenido */}
       {isEnvelopeOpen && (
         <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          {/* Saludo personalizado al invitado */}
+
           <section className="pt-20 pb-8 px-4 text-center relative z-10">
-            <p className="text-lg md:text-xl text-[#5a4a3a]/70 mb-2">Nos complace en invitar a:</p>
+            <p className="text-lg md:text-xl text-[#5a4a3a]/70 mb-2">
+              Nos complace en invitar a:
+            </p>
+
             <h1 className="font-[family-name:var(--font-script)] text-4xl md:text-5xl lg:text-6xl text-[#c9a45c] mb-4">
               {guest.name}
             </h1>
+
             {guest.message && (
               <p className="text-lg text-[#5a4a3a]/80 italic max-w-lg mx-auto">
                 {guest.message}
               </p>
             )}
+
+            {/* 🔥 CAMBIO AQUÍ */}
             <div className="mt-6 inline-flex items-center gap-2 bg-[#c9a45c]/10 px-6 py-3 rounded-full">
               <span className="text-[#5a4a3a] text-lg">
-                Tienes <strong className="text-[#c9a45c] text-2xl">{guest.passes}</strong> {guest.passes === 1 ? 'pase' : 'pases'}
+                Invitación para{" "}
+                <strong className="text-[#c9a45c] text-2xl">{guest.passes}</strong>{" "}
+                {guest.passes === 1 ? "persona" : "personas"}
               </span>
             </div>
           </section>
 
-          <WeddingHeader
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-            date={WEDDING_CONFIG.dateString}
-            quote={WEDDING_CONFIG.biblicalQuote}
-            quoteReference={WEDDING_CONFIG.biblicalReference}
-          />
-
+          <WeddingHeader {...WEDDING_CONFIG} quote={WEDDING_CONFIG.biblicalQuote} quoteReference={WEDDING_CONFIG.biblicalReference} />
           <ParentsSection parents={WEDDING_CONFIG.parents} />
-
-          <CoupleSection
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-            brideFullName={WEDDING_CONFIG.brideFullName}
-            groomFullName={WEDDING_CONFIG.groomFullName}
-            image={WEDDING_CONFIG.coupleImage}
-          />
-
+          <CoupleSection {...WEDDING_CONFIG} image={WEDDING_CONFIG.coupleImage} />
           <CalendarSection date={WEDDING_CONFIG.date} />
-
-          <EventsSection
-            ceremony={WEDDING_CONFIG.ceremony}
-            reception={WEDDING_CONFIG.reception}
-          />
-
+          <EventsSection ceremony={WEDDING_CONFIG.ceremony} reception={WEDDING_CONFIG.reception} />
           <ScheduleSection schedule={WEDDING_CONFIG.schedule} />
 
-          {/* RSVP Personalizado - Confirmacion con base de datos */}
           <PersonalizedRsvpSection
             guestName={guest.name}
             guestSlug={guest.slug}
             passes={guest.passes}
           />
 
-          <SaveDateSection
-            date={WEDDING_CONFIG.date}
-            ceremony={WEDDING_CONFIG.ceremony}
-            reception={WEDDING_CONFIG.reception}
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
-
+          <SaveDateSection {...WEDDING_CONFIG} />
           <GiftsSection gifts={WEDDING_CONFIG.gifts} />
-
           <PhotoGallery />
-
-          <MessagesSection
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
-
-          <WeddingFooter
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
+          <MessagesSection bride={WEDDING_CONFIG.bride} groom={WEDDING_CONFIG.groom} />
+          <WeddingFooter bride={WEDDING_CONFIG.bride} groom={WEDDING_CONFIG.groom} />
         </div>
       )}
     </main>

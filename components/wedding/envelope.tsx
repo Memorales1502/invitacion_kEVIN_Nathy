@@ -31,7 +31,7 @@ export function Envelope({ bride, groom, date, onOpen, guestName }: EnvelopeProp
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-contain md:bg-cover bg center bg-no-repeat"
         style={{
           backgroundImage:
             "url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/final-xCOTv0UGLMpmlVuFxfNWsMzSpUlM69.png')",

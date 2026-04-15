@@ -81,7 +81,7 @@ export function Envelope({ bride, groom, date, onOpen, guestName }: EnvelopeProp
                       {guestName && (
                         <div className="mb-3 sm:mb-4">
                           <p
-                            className="text-[#8a7a68] text-[10px] sm:text-xs tracking-[0.2em] mb-1"
+                            className="text-[#8a7a68] text-[20px] sm:text-xs tracking-[0.2em] mb-1"
                             style={{ fontFamily: "var(--font-serif)", fontWeight: 400 }}
                           >
                             Para:
@@ -92,7 +92,7 @@ export function Envelope({ bride, groom, date, onOpen, guestName }: EnvelopeProp
                               className="text-[#4f3f31] font-medium"
                               style={{
                                 fontFamily: "var(--font-script)",
-                                fontSize: "38px",
+                                fontSize: "28px",
                                 lineHeight: "1",
                                 display: "inline-block",
                                 transform: "scale(1.35)",

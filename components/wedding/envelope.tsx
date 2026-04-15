@@ -78,15 +78,15 @@ export function Envelope({ bride, groom, date, onOpen, guestName }: EnvelopeProp
                   >
                     <div className="px-6 py-8 sm:px-10 sm:py-12 md:px-14 md:py-16 text-center">
                       {guestName && (
-                        <div className="mb-3 sm:mb-4">
+                        <div className="mb-4 sm:mb-5">
                           <p
-                            className="text-[#8a7a68] text-[10px] sm:text-xs tracking-[0.2em] mb-1"
+                            className="text-[#8a7a68] text-[10px] sm:text-xs tracking-[0.2em] mb-1 sm:mb-2"
                             style={{ fontFamily: "var(--font-serif)", fontWeight: 400 }}
                           >
                             Para:
                           </p>
                           <p
-                            className="text-[#5a4a3a] text-xl sm:text-2xl md:text-3xl font-medium leading-tight"
+                            className="text-[#5a4a3a] text-[28px] sm:text-[34px] md:text-[42px] font-medium leading-none"
                             style={{ fontFamily: "var(--font-script)" }}
                           >
                             {guestName}

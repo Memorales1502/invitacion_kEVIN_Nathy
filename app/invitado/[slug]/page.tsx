@@ -137,7 +137,7 @@ export default function GuestInvitation({ params }: { params: Promise<{ slug: st
         <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
           {/* Saludo personalizado al invitado */}
           <section className="pt-20 pb-8 px-4 text-center relative z-10">
-            <h1 className="font-[family-name:var(--font-script)] text-2xl md:text-3xl lg:text-4xl text-[#c9a45c] mb-4">
+            <h1 className="font-[family-name:var(--font-script)] text-4xl md:text-5xl lg:text-6xl text-[#c9a45c] mb-4">
               {guest.name}
             </h1>
 

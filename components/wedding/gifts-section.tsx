@@ -20,7 +20,7 @@ export function GiftsSection({ gifts }: GiftsSectionProps) {
             Mesa de Regalos
           </h2>
           <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-[#c9a45c]/20">
-            <p className="text-[#111111]/100 text-lg leading-relaxed Whitespace-pre-line">
+            <p className="text-[#111111]/100 text-lg leading-relaxed whitespace-pre-line">
               {gifts.message}
             </p>
           </div>

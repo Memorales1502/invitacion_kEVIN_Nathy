@@ -106,12 +106,13 @@ export default function GuestInvitation({ params }: { params: Promise<{ slug: st
     <main className="min-h-screen relative overflow-hidden">
       {/* Fondo */}
       <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        className="fixed inset-0 bg-center bg-no-repeat"
         style={{
           backgroundImage:
             "url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/final-xCOTv0UGLMpmlVuFxfNWsMzSpUlM69.png')",
+          backgroundSize: "60%",   // 🔥 AQUI controlas el tamaño
           filter: "blur(8px) brightness(1.1)",
-          transform: "scale(1.1)",
+          transform: "scale(1.0)", // 🔥 BAJA ESTO (lo tenías en 1.1)
         }}
       />
       <div className="fixed inset-0 bg-gradient-to-b from-white/85 via-white/80 to-white/85" />

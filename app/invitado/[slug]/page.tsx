@@ -13,7 +13,6 @@ import { ScheduleSection } from "@/components/wedding/schedule-section"
 import { PersonalizedRsvpSection } from "@/components/wedding/personalized-rsvp-section"
 import { SaveDateSection } from "@/components/wedding/save-date-section"
 import { GiftsSection } from "@/components/wedding/gifts-section"
-import { PhotoGallery } from "@/components/wedding/photo-gallery"
 import { MessagesSection } from "@/components/wedding/messages-section"
 import { WeddingFooter } from "@/components/wedding/wedding-footer"
 import { getGuestBySlug } from "@/lib/guests"
@@ -199,8 +198,6 @@ export default function GuestInvitation({ params }: { params: Promise<{ slug: st
           />
 
           <GiftsSection gifts={WEDDING_CONFIG.gifts} />
-
-          <PhotoGallery />
 
           <MessagesSection bride={WEDDING_CONFIG.bride} groom={WEDDING_CONFIG.groom} />
 

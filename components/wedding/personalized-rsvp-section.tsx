@@ -99,12 +99,12 @@ export function PersonalizedRsvpSection({
                 <p className="text-lg text-[#5a4a3a]/70 mt-4">Personas confirmadas</p>
                 <p className="text-4xl font-bold text-[#c9a45c]">{finalCount}</p>
               </div>
-              <p className="text-xl text-[#5a4a3a]/70 mt-6">
+              <p className="text-xl text-[#5a4a3a]/100 mt-6">
                 Te esperamos el 1 de Mayo de 2026
               </p>
             </div>
           ) : (
-            <p className="text-xl text-[#5a4a3a]/70">
+            <p className="text-xl text-[#5a4a3a]/100">
               Gracias por avisarnos. Te deseamos lo mejor.
             </p>
           )}
@@ -123,7 +123,7 @@ export function PersonalizedRsvpSection({
           <h2 className="font-[family-name:var(--font-script)] text-4xl md:text-5xl text-[#c9a45c] mb-4">
             Confirma tu Asistencia
           </h2>
-          <p className="text-xl text-[#5a4a3a]/70 mb-2">
+          <p className="text-xl text-[#000000]/100 mb-2">
             Por favor confirma antes del 17 de Abril de 2026
           </p>
         </div>

@@ -28,7 +28,7 @@ export function WeddingFooter({ bride, groom }: WeddingFooterProps) {
         </p>
         
         <p className="font-[family-name:var(--font-script)] text-3xl text-[#5a4a3a]">
-          Con amor,
+          Con cariño y Aprecio,
         </p>
         <p className="font-[family-name:var(--font-script)] text-5xl md:text-6xl text-[#c9a45c] mt-3">
           {groom} & {bride}
@@ -36,7 +36,7 @@ export function WeddingFooter({ bride, groom }: WeddingFooterProps) {
         
         {/* Copyright */}
         <div className="mt-14 pt-8 border-t border-[#c9a45c]/20">
-          <p className="text-xl text-[#5a4a3a] font-medium">
+          <p className="text-2xl text-[#5a4a3a] font-medium">
             01.05.2026
           </p>
         </div>

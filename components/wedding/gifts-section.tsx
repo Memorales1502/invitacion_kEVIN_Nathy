@@ -36,7 +36,7 @@ export function GiftsSection({ gifts }: GiftsSectionProps) {
               <div className="bg-[#faf7f2] border border-[#c9a45c]/70 rounded-2xl p-6 md:p-8 text-left">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <Landmark className="w-5 h-5 text-[#111111]" />
-                  <h3 className="text-[#c9a45c] uppercase tracking-[0.18em] text-sm font-medium">
+                  <h3 className="text-[#111111] uppercase tracking-[0.18em] text-sm font-medium">
                     Si lo Prefieres
                   </h3>
                 </div>

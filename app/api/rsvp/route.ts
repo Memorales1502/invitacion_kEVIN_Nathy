@@ -12,16 +12,17 @@ export async function POST(request: NextRequest) {
     }
 
     if (typeof confirmed !== "boolean") {
-      return NextResponse.json({ error: "El campo confirmed es requerido" }, { status: 400 })
+      return NextResponse.json(
+        { error: "El campo confirmed es requerido" },
+        { status: 400 }
+      )
     }
 
-    // Verificar invitado en archivo local
     const localGuest = getGuestBySlug(slug)
     if (!localGuest) {
       return NextResponse.json({ error: "Invitado no encontrado" }, { status: 404 })
     }
 
-    // Validar número de asistentes
     const finalAttendingCount = confirmed ? Number(attendingCount || 0) : 0
 
     if (confirmed && finalAttendingCount <= 0) {
@@ -40,10 +41,9 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient()
 
-    // Verificar si el invitado existe en Supabase
     const { data: dbGuest, error: findError } = await supabase
       .from("guests")
-      .select("slug, name, passes")
+      .select("slug")
       .eq("slug", slug)
       .maybeSingle()
 
@@ -52,7 +52,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Error consultando invitado en la base de datos",
-          details: findError.message,
+          supabase: {
+            message: findError.message,
+            details: findError.details,
+            hint: findError.hint,
+            code: findError.code,
+          },
         },
         { status: 500 }
       )
@@ -67,7 +72,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Actualizar confirmación en Supabase
     const { error: updateError } = await supabase
       .from("guests")
       .update({
@@ -83,7 +87,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "No se pudo guardar la confirmación en Supabase",
-          details: updateError.message,
+          supabase: {
+            message: updateError.message,
+            details: updateError.details,
+            hint: updateError.hint,
+            code: updateError.code,
+          },
         },
         { status: 500 }
       )
@@ -106,7 +115,13 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error("RSVP POST Error:", error)
-    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: "Error interno del servidor",
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    )
   }
 }
 
@@ -119,7 +134,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Slug requerido" }, { status: 400 })
     }
 
-    // Verificar invitado en archivo local
     const localGuest = getGuestBySlug(slug)
     if (!localGuest) {
       return NextResponse.json({ error: "Invitado no encontrado" }, { status: 404 })
@@ -138,7 +152,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         {
           error: "No se pudo obtener la confirmación desde Supabase",
-          details: error.message,
+          supabase: {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+          },
         },
         { status: 500 }
       )
@@ -157,6 +176,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ guest })
   } catch (error) {
     console.error("GET Guest Error:", error)
-    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: "Error interno del servidor",
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 }
+    )
   }
 }

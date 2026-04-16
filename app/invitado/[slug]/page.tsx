@@ -53,7 +53,7 @@ const WEDDING_CONFIG = {
   },
   schedule: [
     { time: "15:00", event: "Misa", icon: "church" },
-    { time: "16:30", event: "Sesion de Fotos", icon: "camera" },
+    { time: "16:30", event: "Sesión de Fotos", icon: "camera" },
     { time: "17:00", event: "Ingreso de Novios", icon: "party" },
     { time: "17:30", event: "Brindis", icon: "cocktail" },
     { time: "18:00", event: "Cena", icon: "dinner" },

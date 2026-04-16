@@ -61,7 +61,7 @@ export function RsvpSection({ whatsapp, bride, groom }: RsvpSectionProps) {
               <RadioGroup value={attendance} onValueChange={setAttendance}>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="yes" />
-                  <Label htmlFor="yes" className="font-normal cursor-pointer">Si, ahi estare!</Label>
+                  <Label htmlFor="yes" className="font-normal cursor-pointer">Si, ahí estaré!</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="no" />
@@ -72,7 +72,7 @@ export function RsvpSection({ whatsapp, bride, groom }: RsvpSectionProps) {
 
             {attendance === "yes" && (
               <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
-                <Label htmlFor="guests" className="text-foreground">Numero de invitados</Label>
+                <Label htmlFor="guests" className="text-foreground">Número de invitados</Label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input

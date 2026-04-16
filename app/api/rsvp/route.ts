@@ -5,17 +5,16 @@ import { getGuestBySlug } from "@/lib/guests"
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { slug, confirmed, attendingCount, message } = body
+    console.log("RSVP BODY:", body)
+
+    const slug = String(body?.slug ?? "").trim()
+    const confirmed = body?.confirmed === true
+    const attendingCount = Number(body?.attendingCount ?? 0)
+    const message =
+      typeof body?.message === "string" ? body.message.trim() : null
 
     if (!slug) {
       return NextResponse.json({ error: "Slug requerido" }, { status: 400 })
-    }
-
-    if (typeof confirmed !== "boolean") {
-      return NextResponse.json(
-        { error: "El campo confirmed es requerido" },
-        { status: 400 }
-      )
     }
 
     const localGuest = getGuestBySlug(slug)
@@ -23,9 +22,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invitado no encontrado" }, { status: 404 })
     }
 
-    const finalAttendingCount = confirmed ? Number(attendingCount || 0) : 0
+    const finalAttendingCount = confirmed ? attendingCount : 0
 
-    if (confirmed && finalAttendingCount <= 0) {
+    if (confirmed && (!Number.isFinite(finalAttendingCount) || finalAttendingCount <= 0)) {
       return NextResponse.json(
         { error: "Debes indicar cuántas personas asistirán" },
         { status: 400 }
@@ -48,7 +47,7 @@ export async function POST(request: NextRequest) {
       .maybeSingle()
 
     if (findError) {
-      console.error("Error consultando invitado en Supabase:", findError)
+      console.error("Error consultando invitado:", findError)
       return NextResponse.json(
         {
           error: "Error consultando invitado en la base de datos",
@@ -65,21 +64,23 @@ export async function POST(request: NextRequest) {
 
     if (!dbGuest) {
       return NextResponse.json(
-        {
-          error: `El invitado con slug '${slug}' no existe en la tabla public.guests`,
-        },
+        { error: `El invitado con slug '${slug}' no existe en public.guests` },
         { status: 404 }
       )
     }
 
+    const payload = {
+      confirmed,
+      attending_count: finalAttendingCount,
+      message,
+      confirmed_at: new Date().toISOString(),
+    }
+
+    console.log("RSVP UPDATE PAYLOAD:", payload)
+
     const { error: updateError } = await supabase
       .from("guests")
-      .update({
-        confirmed,
-        attending_count: finalAttendingCount,
-        message: message?.trim() ? message.trim() : null,
-        confirmed_at: new Date().toISOString(),
-      })
+      .update(payload)
       .eq("slug", slug)
 
     if (updateError) {
@@ -93,6 +94,7 @@ export async function POST(request: NextRequest) {
             hint: updateError.hint,
             code: updateError.code,
           },
+          payload,
         },
         { status: 500 }
       )
@@ -107,7 +109,7 @@ export async function POST(request: NextRequest) {
         passes: localGuest.passes,
         confirmed,
         attending_count: finalAttendingCount,
-        message: message?.trim() ? message.trim() : null,
+        message,
       },
       message: confirmed
         ? `Confirmación exitosa para ${finalAttendingCount} persona(s)`
@@ -148,7 +150,6 @@ export async function GET(request: NextRequest) {
       .maybeSingle()
 
     if (error) {
-      console.error("Error obteniendo confirmación:", error)
       return NextResponse.json(
         {
           error: "No se pudo obtener la confirmación desde Supabase",
@@ -163,19 +164,18 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const guest = {
-      name: localGuest.name,
-      slug: localGuest.slug,
-      passes: localGuest.passes,
-      confirmed: data?.confirmed ?? null,
-      attending_count: data?.attending_count ?? null,
-      message: data?.message ?? null,
-      confirmed_at: data?.confirmed_at ?? null,
-    }
-
-    return NextResponse.json({ guest })
+    return NextResponse.json({
+      guest: {
+        name: localGuest.name,
+        slug: localGuest.slug,
+        passes: localGuest.passes,
+        confirmed: data?.confirmed ?? null,
+        attending_count: data?.attending_count ?? null,
+        message: data?.message ?? null,
+        confirmed_at: data?.confirmed_at ?? null,
+      },
+    })
   } catch (error) {
-    console.error("GET Guest Error:", error)
     return NextResponse.json(
       {
         error: "Error interno del servidor",

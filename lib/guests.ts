@@ -125,7 +125,7 @@ export const GUESTS: Guest[] = [
   { name: "Joel Raymundo", slug: "joel-raymundo", passes: 1 },
   { name: "José Pivaral y Esposa", slug: "pivaral-jose", passes: 2 },
   { name: "Marco López, Esposa e Hija", slug: "marco-lopez", passes: 3 },
-  { name: "Alex García", slug: "Alex-garcia", passes: 1 },
+  { name: "Alex García", slug: "alex-garcia", passes: 1 },
   { name: "Enrique García y Esposa", slug: "enrique-garcia", passes: 2 },
   { name: "Alex Alicea", slug: "alex-alicea", passes: 1 },
   

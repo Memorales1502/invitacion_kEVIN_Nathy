@@ -22,41 +22,54 @@ export function PersonalizedRsvpSection({
   alreadyConfirmed,
   previousAttendingCount,
 }: PersonalizedRsvpSectionProps) {
-  const [attendingCount, setAttendingCount] = useState(previousAttendingCount || passes)
+  const initialResponse =
+    alreadyConfirmed === true ? "yes" : alreadyConfirmed === false ? "no" : null
+
+  const [attendingCount, setAttendingCount] = useState(
+    previousAttendingCount && previousAttendingCount > 0 ? previousAttendingCount : passes
+  )
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(alreadyConfirmed === true || alreadyConfirmed === false)
-  const [response, setResponse] = useState<"yes" | "no" | null>(
-    alreadyConfirmed === true ? "yes" : alreadyConfirmed === false ? "no" : null
-  )
-  const [attendance, setAttendance] = useState<"yes" | "no">("yes")
+  const [submitted, setSubmitted] = useState(initialResponse !== null)
+  const [response, setResponse] = useState<"yes" | "no" | null>(initialResponse)
+  const [attendance, setAttendance] = useState<"yes" | "no">(initialResponse ?? "yes")
   const [error, setError] = useState<string | null>(null)
 
   const handleConfirm = async () => {
     const willAttend = attendance === "yes"
+
     setIsSubmitting(true)
     setError(null)
 
     try {
       const res = await fetch("/api/rsvp", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+        },
         body: JSON.stringify({
           slug: guestSlug,
           confirmed: willAttend,
           attendingCount: willAttend ? attendingCount : 0,
           message: message.trim() || null,
         }),
+        cache: "no-store",
       })
 
-      const data = await res.json()
+      const data = await res.json().catch(() => null)
 
       if (!res.ok) {
-        throw new Error(data.error || "Error al confirmar")
+        throw new Error(data?.error || data?.supabase?.message || "Error al confirmar asistencia")
       }
 
       setResponse(willAttend ? "yes" : "no")
       setSubmitted(true)
+      setError(null)
+
+      if (willAttend) {
+        setAttendingCount(Number(data?.guest?.attending_count ?? attendingCount))
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al enviar confirmacion")
     } finally {
@@ -64,11 +77,15 @@ export function PersonalizedRsvpSection({
     }
   }
 
-  // Si ya confirmo, mostrar estado
-  if (submitted || alreadyConfirmed !== null && alreadyConfirmed !== undefined) {
-    const finalResponse = response || (alreadyConfirmed ? "yes" : "no")
-    const finalCount = attendingCount || previousAttendingCount || 0
-    
+  if (submitted) {
+    const finalResponse = response
+    const finalCount =
+      finalResponse === "yes"
+        ? previousAttendingCount && previousAttendingCount > 0
+          ? previousAttendingCount
+          : attendingCount
+        : 0
+
     return (
       <section className="py-16 px-4">
         <div className="max-w-lg mx-auto text-center">
@@ -90,18 +107,14 @@ export function PersonalizedRsvpSection({
 
           {finalResponse === "yes" ? (
             <div className="space-y-4">
-              <p className="text-xl text-[#5a4a3a]">
-                Hemos registrado tu asistencia
-              </p>
+              <p className="text-xl text-[#5a4a3a]">Hemos registrado tu asistencia</p>
               <div className="bg-[#c9a45c]/10 rounded-xl p-6 inline-block">
                 <p className="text-lg text-[#5a4a3a]/70">Invitado</p>
                 <p className="text-2xl font-semibold text-[#5a4a3a]">{guestName}</p>
                 <p className="text-lg text-[#5a4a3a]/70 mt-4">Personas confirmadas</p>
                 <p className="text-4xl font-bold text-[#c9a45c]">{finalCount}</p>
               </div>
-              <p className="text-xl text-[#5a4a3a]/100 mt-6">
-                Te esperamos el 1 de Mayo de 2026
-              </p>
+              <p className="text-xl text-[#5a4a3a]/100 mt-6">Te esperamos el 1 de Mayo de 2026</p>
             </div>
           ) : (
             <p className="text-xl text-[#5a4a3a]/100">
@@ -129,7 +142,6 @@ export function PersonalizedRsvpSection({
         </div>
 
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-[#c9a45c]/20">
-          {/* Info del invitado */}
           <div className="text-center mb-8 pb-6 border-b border-[#c9a45c]/20">
             <p className="text-[#5a4a3a]/70 text-lg">Invitado</p>
             <p className="text-2xl font-semibold text-[#5a4a3a]">{guestName}</p>
@@ -141,12 +153,11 @@ export function PersonalizedRsvpSection({
             </div>
           </div>
 
-          {/* Pregunta de asistencia */}
           <div className="space-y-3 mb-6">
             <Label className="text-lg text-[#5a4a3a]">¿Podras asistir?</Label>
-            <RadioGroup 
-              value={attendance} 
-              onValueChange={(val) => setAttendance(val as "yes" | "no")} 
+            <RadioGroup
+              value={attendance}
+              onValueChange={(val) => setAttendance(val as "yes" | "no")}
               className="space-y-3"
             >
               <div className="flex items-center space-x-3 p-4 rounded-lg border border-[#c9a45c]/20 hover:bg-[#c9a45c]/5 transition-colors cursor-pointer">
@@ -166,7 +177,6 @@ export function PersonalizedRsvpSection({
             </RadioGroup>
           </div>
 
-          {/* Selector de cantidad - solo si asiste */}
           {attendance === "yes" && (
             <div className="mb-6 animate-in slide-in-from-top-2 duration-300">
               <p className="text-center text-[#5a4a3a]/70 mb-4 text-lg">
@@ -176,6 +186,7 @@ export function PersonalizedRsvpSection({
                 {Array.from({ length: passes }, (_, i) => i + 1).map((num) => (
                   <button
                     key={num}
+                    type="button"
                     onClick={() => setAttendingCount(num)}
                     className={`w-14 h-14 rounded-full text-xl font-semibold transition-all ${
                       attendingCount === num
@@ -193,7 +204,6 @@ export function PersonalizedRsvpSection({
             </div>
           )}
 
-          {/* Mensaje opcional */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-2">
               <MessageSquare className="w-5 h-5 text-[#c9a45c]" />
@@ -208,20 +218,18 @@ export function PersonalizedRsvpSection({
             />
           </div>
 
-          {/* Error message */}
           {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded-lg text-red-700 text-center">
               {error}
             </div>
           )}
 
-          {/* Boton de confirmar */}
           <Button
             onClick={handleConfirm}
             disabled={isSubmitting}
             className={`w-full text-white text-lg py-6 ${
-              attendance === "yes" 
-                ? "bg-[#c9a45c] hover:bg-[#b8944c]" 
+              attendance === "yes"
+                ? "bg-[#c9a45c] hover:bg-[#b8944c]"
                 : "bg-[#5a4a3a] hover:bg-[#4a3a2a]"
             }`}
           >

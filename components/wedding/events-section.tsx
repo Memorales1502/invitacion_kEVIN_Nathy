@@ -47,7 +47,7 @@ export function EventsSection({ ceremony, reception }: EventsSectionProps) {
               onClick={() => window.open(ceremony.mapsUrl, '_blank')}
             >
               <MapPin className="w-4 h-4 mr-2" />
-              Ver Ubicacion
+              Ver Ubicación
             </Button>
           </div>
 
@@ -71,7 +71,7 @@ export function EventsSection({ ceremony, reception }: EventsSectionProps) {
               onClick={() => window.open(reception.mapsUrl, '_blank')}
             >
               <MapPin className="w-4 h-4 mr-2" />
-              Ver Ubicacion
+              Ver Ubicación
             </Button>
           </div>
         </div>

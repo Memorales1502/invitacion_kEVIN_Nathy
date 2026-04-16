@@ -122,6 +122,13 @@ export const GUESTS: Guest[] = [
   { name: "Maria Paiz", slug: "maria-paiz", passes: 1 },
   { name: "Joaquin Reyes", slug: "joaquin-reyes", passes: 2 },
   { name: "Esvin Joque", slug: "esvin-joque", passes: 2 },
+  { name: "Joel Raymundo", slug: "joel-raymundo", passes: 1 },
+  { name: "José Pivaral y Esposa", slug: "pivaral-jose", passes: 2 },
+  { name: "Marco López, Esposa e Hija", slug: "marco-lopez", passes: 3 },
+  { name: "Alex García", slug: "Alex-garcía", passes: 1 },
+  { name: "Marco López, Esposa e Hija", slug: "marco-lopez", passes: 3 },
+  { name: "Enrique García y Esposa", slug: "enrique-garcía", passes: 2 },
+  
 ]
 
 // Funcion para buscar un invitado por su slug

@@ -16,7 +16,7 @@ export function ParentsSection({ parents }: ParentsSectionProps) {
     <section className="py-20 px-4 bg-white/40 backdrop-blur-sm">
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-lg md:text-xl tracking-[0.4em] text-[#5a4a3a] uppercase mb-8 font-medium">
-          Con la bendicion de Dios y nuestros padres
+          Con la bendición de Dios y nuestros padres
         </h2>
         
         <div className="grid md:grid-cols-2 gap-12 md:gap-16">

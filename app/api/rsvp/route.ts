@@ -1,14 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { NextRequest, NextResponse } from "next/server"
-import { GUESTS, getGuestBySlug } from "@/lib/guests"
-
-// Almacenamiento temporal en memoria para confirmaciones (fallback)
-const confirmations = new Map<string, {
-  confirmed: boolean
-  attendingCount: number
-  message: string
-  confirmedAt: string
-}>()
+import { getGuestBySlug } from "@/lib/guests"
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,76 +11,101 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Slug requerido" }, { status: 400 })
     }
 
+    if (typeof confirmed !== "boolean") {
+      return NextResponse.json({ error: "El campo confirmed es requerido" }, { status: 400 })
+    }
+
     // Verificar invitado en archivo local
     const localGuest = getGuestBySlug(slug)
     if (!localGuest) {
       return NextResponse.json({ error: "Invitado no encontrado" }, { status: 404 })
     }
 
-    // Validar que no se exceda el numero de pases
-    if (confirmed && attendingCount > localGuest.passes) {
+    // Validar número de asistentes
+    const finalAttendingCount = confirmed ? Number(attendingCount || 0) : 0
+
+    if (confirmed && finalAttendingCount <= 0) {
+      return NextResponse.json(
+        { error: "Debes indicar cuántas personas asistirán" },
+        { status: 400 }
+      )
+    }
+
+    if (confirmed && finalAttendingCount > localGuest.passes) {
       return NextResponse.json(
         { error: `Solo tienes ${localGuest.passes} pases disponibles` },
         { status: 400 }
       )
     }
 
-    // Intentar guardar en Supabase
-    let savedInDb = false
-    try {
-      const supabase = await createClient()
-      
-      // Verificar si el invitado existe en la base de datos
-      const { data: dbGuest } = await supabase
-        .from("guests")
-        .select("*")
-        .eq("slug", slug)
-        .single()
+    const supabase = await createClient()
 
-      if (dbGuest) {
-        // Actualizar en base de datos
-        const { error } = await supabase
-          .from("guests")
-          .update({
-            confirmed,
-            attending_count: confirmed ? attendingCount : 0,
-            message: message || null,
-            confirmed_at: new Date().toISOString(),
-          })
-          .eq("slug", slug)
+    // Verificar si el invitado existe en Supabase
+    const { data: dbGuest, error: findError } = await supabase
+      .from("guests")
+      .select("slug, name, passes")
+      .eq("slug", slug)
+      .maybeSingle()
 
-        if (!error) {
-          savedInDb = true
-        }
-      }
-    } catch (dbError) {
-      console.log("[v0] Base de datos no disponible, usando almacenamiento local")
+    if (findError) {
+      console.error("Error consultando invitado en Supabase:", findError)
+      return NextResponse.json(
+        {
+          error: "Error consultando invitado en la base de datos",
+          details: findError.message,
+        },
+        { status: 500 }
+      )
     }
 
-    // Guardar en memoria como respaldo
-    confirmations.set(slug, {
-      confirmed,
-      attendingCount: confirmed ? attendingCount : 0,
-      message: message || "",
-      confirmedAt: new Date().toISOString(),
-    })
+    if (!dbGuest) {
+      return NextResponse.json(
+        {
+          error: `El invitado con slug '${slug}' no existe en la tabla public.guests`,
+        },
+        { status: 404 }
+      )
+    }
+
+    // Actualizar confirmación en Supabase
+    const { error: updateError } = await supabase
+      .from("guests")
+      .update({
+        confirmed,
+        attending_count: finalAttendingCount,
+        message: message?.trim() ? message.trim() : null,
+        confirmed_at: new Date().toISOString(),
+      })
+      .eq("slug", slug)
+
+    if (updateError) {
+      console.error("Error actualizando confirmación:", updateError)
+      return NextResponse.json(
+        {
+          error: "No se pudo guardar la confirmación en Supabase",
+          details: updateError.message,
+        },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({
       success: true,
-      savedInDb,
+      savedInDb: true,
       guest: {
         name: localGuest.name,
         slug: localGuest.slug,
         passes: localGuest.passes,
         confirmed,
-        attending_count: confirmed ? attendingCount : 0,
+        attending_count: finalAttendingCount,
+        message: message?.trim() ? message.trim() : null,
       },
       message: confirmed
-        ? `Confirmacion exitosa para ${attendingCount} persona(s)`
-        : "Has indicado que no podras asistir",
+        ? `Confirmación exitosa para ${finalAttendingCount} persona(s)`
+        : "Has indicado que no podrás asistir",
     })
   } catch (error) {
-    console.error("RSVP Error:", error)
+    console.error("RSVP POST Error:", error)
     return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 })
   }
 }
@@ -102,41 +119,39 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Slug requerido" }, { status: 400 })
     }
 
-    // Buscar en archivo local
+    // Verificar invitado en archivo local
     const localGuest = getGuestBySlug(slug)
     if (!localGuest) {
       return NextResponse.json({ error: "Invitado no encontrado" }, { status: 404 })
     }
 
-    // Intentar obtener estado de confirmacion de la base de datos
-    let dbConfirmation = null
-    try {
-      const supabase = await createClient()
-      const { data } = await supabase
-        .from("guests")
-        .select("confirmed, attending_count, message, confirmed_at")
-        .eq("slug", slug)
-        .single()
-      
-      if (data) {
-        dbConfirmation = data
-      }
-    } catch {
-      // Base de datos no disponible
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from("guests")
+      .select("confirmed, attending_count, message, confirmed_at")
+      .eq("slug", slug)
+      .maybeSingle()
+
+    if (error) {
+      console.error("Error obteniendo confirmación:", error)
+      return NextResponse.json(
+        {
+          error: "No se pudo obtener la confirmación desde Supabase",
+          details: error.message,
+        },
+        { status: 500 }
+      )
     }
 
-    // Verificar confirmacion en memoria
-    const memoryConfirmation = confirmations.get(slug)
-
-    // Combinar datos
     const guest = {
       name: localGuest.name,
       slug: localGuest.slug,
       passes: localGuest.passes,
-      confirmed: dbConfirmation?.confirmed ?? memoryConfirmation?.confirmed ?? null,
-      attending_count: dbConfirmation?.attending_count ?? memoryConfirmation?.attendingCount ?? null,
-      message: dbConfirmation?.message ?? memoryConfirmation?.message ?? null,
-      confirmed_at: dbConfirmation?.confirmed_at ?? memoryConfirmation?.confirmedAt ?? null,
+      confirmed: data?.confirmed ?? null,
+      attending_count: data?.attending_count ?? null,
+      message: data?.message ?? null,
+      confirmed_at: data?.confirmed_at ?? null,
     }
 
     return NextResponse.json({ guest })

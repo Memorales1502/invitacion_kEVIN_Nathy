@@ -37,7 +37,7 @@ export function CoupleSection({ bride, groom, brideFullName, groomFullName, imag
         </div>
 
         <p className="text-xl md:text-2xl text-[#5a4a3a] leading-relaxed mb-8">
-          Nos encantaria celebrar junto a ti nuestra boda
+          Nos encantaría celebrar junto a ti nuestra boda
         </p>
 
         <div className="flex items-center justify-center gap-4">

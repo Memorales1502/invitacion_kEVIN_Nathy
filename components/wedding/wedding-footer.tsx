@@ -23,8 +23,8 @@ export function WeddingFooter({ bride, groom }: WeddingFooterProps) {
         </h2>
         
         <p className="text-xl md:text-2xl text-[#5a4a3a] mb-10 leading-relaxed">
-          Esperamos con ansias celebrar este dia tan especial junto a ti.
-          Tu presencia hara nuestra boda aun mas memorable.
+          Esperamos con ansias celebrar este día tan especial junto a tí.
+          Tu presencia hára nuestra boda aun mas memorable.
         </p>
         
         <p className="font-[family-name:var(--font-script)] text-3xl text-[#5a4a3a]">

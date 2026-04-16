@@ -43,7 +43,7 @@ const WEDDING_CONFIG = {
   reception: {
     time: "17:00",
     venue: "Finca Don Pepe",
-    address: "Carretera Principal, Laguna Bermeja, zona 7, Santa Catarina pinula",
+    address: "Carretera Principal, Laguna Bermeja, Lote 100, zona 7, Santa Catarina pinula",
     mapsUrl: "https://maps.app.goo.gl/p9jkehoAmaKkt55e6",
   },
   whatsapp: "50230811932",

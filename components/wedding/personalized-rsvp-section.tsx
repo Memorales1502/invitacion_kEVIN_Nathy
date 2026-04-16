@@ -164,7 +164,7 @@ export function PersonalizedRsvpSection({
                 <RadioGroupItem value="yes" id="yes" />
                 <Label htmlFor="yes" className="flex items-center gap-2 font-normal cursor-pointer text-lg flex-1">
                   <CheckCircle className="w-5 h-5 text-green-600" />
-                  Si, ahi estare!
+                  Si, ahí estaré!
                 </Label>
               </div>
               <div className="flex items-center space-x-3 p-4 rounded-lg border border-[#c9a45c]/20 hover:bg-[#c9a45c]/5 transition-colors cursor-pointer">
@@ -180,7 +180,7 @@ export function PersonalizedRsvpSection({
           {attendance === "yes" && (
             <div className="mb-6 animate-in slide-in-from-top-2 duration-300">
               <p className="text-center text-[#5a4a3a]/70 mb-4 text-lg">
-                ¿Cuantas personas asistiran?
+                ¿Cuantas personas asistirán?
               </p>
               <div className="flex justify-center gap-3 flex-wrap">
                 {Array.from({ length: passes }, (_, i) => i + 1).map((num) => (
@@ -199,7 +199,7 @@ export function PersonalizedRsvpSection({
                 ))}
               </div>
               <p className="text-center text-sm text-[#5a4a3a]/60 mt-2">
-                Selecciona el numero de personas que asistiran
+                Selecciona el número de personas que asistirán
               </p>
             </div>
           )}
@@ -246,13 +246,13 @@ export function PersonalizedRsvpSection({
             ) : (
               <>
                 <X className="w-5 h-5 mr-2" />
-                Confirmar que no asistire
+                Confirmar que no asistiré
               </>
             )}
           </Button>
 
           <p className="text-center text-sm text-[#5a4a3a]/50 mt-4">
-            Tu confirmacion quedara registrada automaticamente
+            Tu confirmación quedara registrada automaticamente
           </p>
         </div>
       </div>

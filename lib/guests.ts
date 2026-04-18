@@ -130,9 +130,9 @@ export const GUESTS: Guest[] = [
   { name: "Alex Alicea", slug: "alex-alicea", passes: 1 },
   { name: "Carol Arias", slug: "carol-arias", passes: 1 },
   { name: "Stefhany Andreí", slug: "stefhany-andrei", passes: 2 },
-  { name: "Yailin", slug: "yailin", passes: 2 }
+  { name: "Yailin", slug: "yailin", passes: 1 },
+   { name: "Kimberly Reyes", slug: "kimberly-reyes", passes: 1 },
   
-  ,
   
 ]
 

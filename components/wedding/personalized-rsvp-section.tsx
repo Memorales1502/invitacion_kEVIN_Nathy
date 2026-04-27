@@ -137,7 +137,7 @@ export function PersonalizedRsvpSection({
             Confirma tu Asistencia
           </h2>
           <p className="text-xl text-[#000000]/100 mb-2">
-            Por favor confirma antes del 17 de Abril de 2026
+            "Gracias por su Confirmación"
           </p>
         </div>
 

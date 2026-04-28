@@ -1,217 +1,167 @@
-"use client"
+import Image from "next/image"
+import { createClient } from "@/lib/supabase/server"
 
-import { useState, useRef } from "react"
-import { Envelope } from "@/components/wedding/envelope"
-import { AudioPlayer } from "@/components/wedding/audio-player"
-import { WeddingHeader } from "@/components/wedding/wedding-header"
-import { ParentsSection } from "@/components/wedding/parents-section"
-import { CoupleSection } from "@/components/wedding/couple-section"
-import { CalendarSection } from "@/components/wedding/calendar-section"
-import { EventsSection } from "@/components/wedding/events-section"
-import { ScheduleSection } from "@/components/wedding/schedule-section"
-import { RsvpSection } from "@/components/wedding/rsvp-section"
-import { SaveDateSection } from "@/components/wedding/save-date-section"
-import { GiftsSection } from "@/components/wedding/gifts-section"
-import { MessagesSection } from "@/components/wedding/messages-section"
-import { WeddingFooter } from "@/components/wedding/wedding-footer"
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
-// ============================================
-// CONFIGURACION DE LA BODA - EDITA AQUI TUS DATOS
-// ============================================
-const WEDDING_CONFIG = {
-  // Nombres de los novios
-  bride: "Nathaly",
-  groom: "Kevin",
-  brideFullName: "Sandra Nathaly García García",
-  groomFullName: "Kevin Emanuel Antonio López Deocuté",
-
-  // Fecha del evento
-  date: new Date(2026, 4, 1), // Mayo es mes 4 (0-indexed)
-  dateString: "01.05.2026",
-
-  // Cita biblica
-  biblicalQuote: "El amor es paciente, es bondadoso. El amor no es envidioso ni jactancioso ni orgulloso.",
-  biblicalReference: "1 Corintios 13:4",
-
-  // Nombres de los padres
-  parents: {
-    brideFather: "Julio Enrique García Alvizures",
-    brideMother: "Sandra Isabel García Oscal de García",
-    groomFather: "Marco Antonio Lopéz Rodriguez",
-    groomMother: "Mayra Elizabeth Deocuté Raymundo",
-  },
-
-  // Ceremonia religiosa
-  ceremony: {
-    time: "15:00",
-    church: "Parroquia Laguna Bermeja",
-    address: "Calle Principal, Laguna Bermeja, zona 7, Santa Catarina Pinula",
-    mapsUrl: "https://maps.app.goo.gl/apGV57mBSAH1NiUE7",
-  },
-
-  // Recepcion
-  reception: {
-    time: "17:00",
-    venue: "Finca Don Pepe",
-    address: "Carretera Principal, Laguna Bermeja, zona 7, Santa Catarina pinula",
-    mapsUrl: "https://maps.app.goo.gl/p9jkehoAmaKkt55e6",
-  },
-
-  // WhatsApp para confirmacion (sin el +)
-  whatsapp: "50230811932",
-
-  // Mesa de regalos
-  gifts: {
-    message: "Tu presencia es nuestro mejor regalo; sin embargo, si deseas obsequiarnos algo, el día del evento encontrarás un espacio destinado para recibir aportes en efectivo.\n\nAsimismo, si lo prefieres, puedes realizar una transferencia a la cuenta monetaria de Banco Industrial No. 7179774679, a nombre de Sandra Nathaly G.",
-  },
-
-  // Itinerario del dia
-  schedule: [
-    { time: "15:00", event: "Misa", icon: "church" },
-    { time: "16:30", event: "Sesion de Fotos", icon: "camera" },
-    { time: "17:00", event: "Ingreso de Novios", icon: "party" },
-    { time: "17:30", event: "Brindis", icon: "cocktail" },
-    { time: "18:00", event: "Cena", icon: "dinner" },
-    { time: "18:30", event: "Primer Baile", icon: "dance" },
-    { time: "19:00", event: "Fiesta", icon: "party" },
-  ],
-
-  // Imagen de la pareja (opcional)
-  coupleImage: "/images/couple.jpeg",
-
-  // Cancion de fondo (coloca tu archivo en public/)
-  songUrl: "/primera.mp3",
+type PhotoItem = {
+  url: string
+  path: string
+  name: string
 }
 
-export default function WeddingInvitation() {
-  const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const audioRef = useRef<HTMLAudioElement>(null)
+type PhotoSubmission = {
+  id: string
+  first_name: string
+  message: string | null
+  photos: PhotoItem[]
+  created_at: string
+}
 
-  const handleOpenEnvelope = () => {
-    setIsEnvelopeOpen(true)
-    // Intentar reproducir la musica cuando se abre el sobre
-    if (audioRef.current) {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true)
-      }).catch(() => {
-        // El navegador bloqueo la reproduccion automatica
-        console.log("[v0] Autoplay blocked by browser")
-      })
-    }
-  }
+export default async function GaleriaFotosPage() {
+  const supabase = await createClient()
 
-  const toggleMusic = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-      } else {
-        audioRef.current.play()
-      }
-      setIsPlaying(!isPlaying)
-    }
-  }
+  const { data, error } = await supabase
+    .from("photo_submissions")
+    .select("id, first_name, message, photos, created_at")
+    .order("created_at", { ascending: false })
+
+  const submissions: PhotoSubmission[] = (data as PhotoSubmission[] | null) || []
+
+  const totalFotos = submissions.reduce((sum, item) => {
+    return sum + (Array.isArray(item.photos) ? item.photos.length : 0)
+  }, 0)
 
   return (
     <main className="min-h-screen relative overflow-hidden">
-      {/* Fondo con imagen estilo boda */}
       <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        className="fixed inset-0 bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/final-xCOTv0UGLMpmlVuFxfNWsMzSpUlM69.png')`,
-          filter: 'blur(8px) brightness(1.1)',
-          transform: 'scale(1.1)',
+          backgroundImage:
+            "url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/final-xCOTv0UGLMpmlVuFxfNWsMzSpUlM69.png')",
+          backgroundSize: "80%",
+          filter: "blur(6px) brightness(0.9)",
+          transform: "scale(1.0)",
         }}
       />
-      {/* Overlay para legibilidad */}
       <div className="fixed inset-0 bg-gradient-to-b from-white/85 via-white/80 to-white/85" />
 
-      {/* Audio player oculto */}
-      <audio ref={audioRef} src={WEDDING_CONFIG.songUrl} loop />
+      <section className="relative z-10 px-4 py-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <p className="text-sm uppercase tracking-[0.35em] text-[#c9a45c] mb-4">
+              Kevin & Nathaly
+            </p>
 
-      {/* Control de musica flotante */}
-      {isEnvelopeOpen && (
-        <AudioPlayer isPlaying={isPlaying} onToggle={toggleMusic} />
-      )}
+            <h1 className="font-[family-name:var(--font-script)] text-5xl md:text-6xl text-[#c9a45c] mb-4">
+              Galería de Fotos
+            </h1>
 
-      {/* Sobre de la invitacion */}
-      {!isEnvelopeOpen && (
-        <Envelope
-          bride={WEDDING_CONFIG.bride}
-          groom={WEDDING_CONFIG.groom}
-          date={WEDDING_CONFIG.dateString}
-          onOpen={handleOpenEnvelope}
-        />
-      )}
+            <p className="text-lg md:text-xl text-[#5a4a3a] max-w-2xl mx-auto">
+              Aquí podrán visualizar y descargar las fotos que sus invitados compartan 🤍
+            </p>
+          </div>
 
-      {/* Contenido de la invitacion */}
-      {isEnvelopeOpen && (
-        <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          {/* Header con logo y fecha */}
-          <WeddingHeader
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-            date={WEDDING_CONFIG.dateString}
-            quote={WEDDING_CONFIG.biblicalQuote}
-            quoteReference={WEDDING_CONFIG.biblicalReference}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#c9a45c]/20 text-center">
+              <p className="text-sm uppercase tracking-[0.2em] text-[#c9a45c] mb-2">
+                Envíos recibidos
+              </p>
+              <p className="text-4xl font-bold text-[#5a4a3a]">
+                {submissions.length}
+              </p>
+            </div>
 
-          {/* Seccion de padres */}
-          <ParentsSection parents={WEDDING_CONFIG.parents} />
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-[#c9a45c]/20 text-center">
+              <p className="text-sm uppercase tracking-[0.2em] text-[#c9a45c] mb-2">
+                Fotos compartidas
+              </p>
+              <p className="text-4xl font-bold text-[#5a4a3a]">
+                {totalFotos}
+              </p>
+            </div>
+          </div>
 
-          {/* Seccion de la pareja */}
-          <CoupleSection
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-            brideFullName={WEDDING_CONFIG.brideFullName}
-            groomFullName={WEDDING_CONFIG.groomFullName}
-            image={WEDDING_CONFIG.coupleImage}
-          />
+          {error ? (
+            <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-red-200 text-center">
+              <h2 className="text-2xl font-semibold text-red-600 mb-3">
+                No se pudo cargar la galería
+              </h2>
+              <p className="text-[#5a4a3a]">
+                Verifica la conexión con Supabase o los permisos de lectura.
+              </p>
+            </div>
+          ) : submissions.length === 0 ? (
+            <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-10 shadow-lg border border-[#c9a45c]/20 text-center">
+              <h2 className="text-3xl font-semibold text-[#5a4a3a] mb-3">
+                Aún no hay fotos compartidas
+              </h2>
+              <p className="text-lg text-[#5a4a3a]/80">
+                Cuando los invitados suban fotos desde el QR, aparecerán aquí.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-8">
+              {submissions.map((item) => (
+                <article
+                  key={item.id}
+                  className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-lg border border-[#c9a45c]/20"
+                >
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-5">
+                    <div>
+                      <h2 className="text-2xl md:text-3xl font-semibold text-[#5a4a3a]">
+                        {item.first_name}
+                      </h2>
 
-          {/* Calendario */}
-          <CalendarSection date={WEDDING_CONFIG.date} />
+                      {item.message && (
+                        <p className="mt-3 text-lg text-[#5a4a3a]/90 whitespace-pre-line italic">
+                          “{item.message}”
+                        </p>
+                      )}
+                    </div>
 
-          {/* Eventos: Misa y Recepcion */}
-          <EventsSection
-            ceremony={WEDDING_CONFIG.ceremony}
-            reception={WEDDING_CONFIG.reception}
-          />
+                    <p className="text-sm text-[#5a4a3a]/60">
+                      {new Date(item.created_at).toLocaleString("es-GT", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      })}
+                    </p>
+                  </div>
 
-          {/* Itinerario */}
-          <ScheduleSection schedule={WEDDING_CONFIG.schedule} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {Array.isArray(item.photos) &&
+                      item.photos.map((photo, index) => (
+                        <div
+                          key={`${item.id}-${index}`}
+                          className="overflow-hidden rounded-2xl border border-[#c9a45c]/20 bg-white shadow-sm"
+                        >
+                          <div className="relative w-full aspect-square">
+                            <Image
+                              src={photo.url}
+                              alt={`Foto ${index + 1} compartida por ${item.first_name}`}
+                              fill
+                              className="object-cover"
+                              unoptimized
+                            />
+                          </div>
 
-          {/* RSVP - Confirmacion */}
-          <RsvpSection
-            whatsapp={WEDDING_CONFIG.whatsapp}
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
-
-          {/* Guardar fecha */}
-          <SaveDateSection
-            date={WEDDING_CONFIG.date}
-            ceremony={WEDDING_CONFIG.ceremony}
-            reception={WEDDING_CONFIG.reception}
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
-
-          {/* Mesa de regalos */}
-          <GiftsSection gifts={WEDDING_CONFIG.gifts} />
-
-          {/* Mensajes para los novios */}
-          <MessagesSection
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
-
-          {/* Footer */}
-          <WeddingFooter
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
+                          <div className="p-3">
+                            <a
+                              href={`/api/photo-download?path=${encodeURIComponent(photo.path)}&name=${encodeURIComponent(photo.name || `foto-${index + 1}.jpg`)}`}
+                              className="block w-full rounded-full bg-[#c9a45c] px-4 py-2 text-center text-sm font-medium text-white hover:bg-[#b8944c] transition"
+                            >
+                              Descargar foto
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
-      )}
+      </section>
     </main>
   )
 }

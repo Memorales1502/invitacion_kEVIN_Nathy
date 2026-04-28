@@ -1,217 +1,212 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { Envelope } from "@/components/wedding/envelope"
-import { AudioPlayer } from "@/components/wedding/audio-player"
-import { WeddingHeader } from "@/components/wedding/wedding-header"
-import { ParentsSection } from "@/components/wedding/parents-section"
-import { CoupleSection } from "@/components/wedding/couple-section"
-import { CalendarSection } from "@/components/wedding/calendar-section"
-import { EventsSection } from "@/components/wedding/events-section"
-import { ScheduleSection } from "@/components/wedding/schedule-section"
-import { RsvpSection } from "@/components/wedding/rsvp-section"
-import { SaveDateSection } from "@/components/wedding/save-date-section"
-import { GiftsSection } from "@/components/wedding/gifts-section"
-import { MessagesSection } from "@/components/wedding/messages-section"
-import { WeddingFooter } from "@/components/wedding/wedding-footer"
+import { useState } from "react"
+import { createClient } from "@supabase/supabase-js"
 
-// ============================================
-// CONFIGURACION DE LA BODA - EDITA AQUI TUS DATOS
-// ============================================
-const WEDDING_CONFIG = {
-  // Nombres de los novios
-  bride: "Nathaly",
-  groom: "Kevin",
-  brideFullName: "Sandra Nathaly García García",
-  groomFullName: "Kevin Emanuel Antonio López Deocuté",
-
-  // Fecha del evento
-  date: new Date(2026, 4, 1), // Mayo es mes 4 (0-indexed)
-  dateString: "01.05.2026",
-
-  // Cita biblica
-  biblicalQuote: "El amor es paciente, es bondadoso. El amor no es envidioso ni jactancioso ni orgulloso.",
-  biblicalReference: "1 Corintios 13:4",
-
-  // Nombres de los padres
-  parents: {
-    brideFather: "Julio Enrique García Alvizures",
-    brideMother: "Sandra Isabel García Oscal de García",
-    groomFather: "Marco Antonio Lopéz Rodriguez",
-    groomMother: "Mayra Elizabeth Deocuté Raymundo",
-  },
-
-  // Ceremonia religiosa
-  ceremony: {
-    time: "15:00",
-    church: "Parroquia Laguna Bermeja",
-    address: "Calle Principal, Laguna Bermeja, zona 7, Santa Catarina Pinula",
-    mapsUrl: "https://maps.app.goo.gl/apGV57mBSAH1NiUE7",
-  },
-
-  // Recepcion
-  reception: {
-    time: "17:00",
-    venue: "Finca Don Pepe",
-    address: "Carretera Principal, Laguna Bermeja, zona 7, Santa Catarina pinula",
-    mapsUrl: "https://maps.app.goo.gl/p9jkehoAmaKkt55e6",
-  },
-
-  // WhatsApp para confirmacion (sin el +)
-  whatsapp: "50230811932",
-
-  // Mesa de regalos
-  gifts: {
-    message: "Tu presencia es nuestro mejor regalo; sin embargo, si deseas obsequiarnos algo, el día del evento encontrarás un espacio destinado para recibir aportes en efectivo.\n\nAsimismo, si lo prefieres, puedes realizar una transferencia a la cuenta monetaria de Banco Industrial No. 7179774679, a nombre de Sandra Nathaly G.",
-  },
-
-  // Itinerario del dia
-  schedule: [
-    { time: "15:00", event: "Misa", icon: "church" },
-    { time: "16:30", event: "Sesion de Fotos", icon: "camera" },
-    { time: "17:00", event: "Ingreso de Novios", icon: "party" },
-    { time: "17:30", event: "Brindis", icon: "cocktail" },
-    { time: "18:00", event: "Cena", icon: "dinner" },
-    { time: "18:30", event: "Primer Baile", icon: "dance" },
-    { time: "19:00", event: "Fiesta", icon: "party" },
-  ],
-
-  // Imagen de la pareja (opcional)
-  coupleImage: "/images/couple.jpeg",
-
-  // Cancion de fondo (coloca tu archivo en public/)
-  songUrl: "/primera.mp3",
+type UploadedPhoto = {
+  url: string
+  path: string
+  name: string
 }
 
-export default function WeddingInvitation() {
-  const [isEnvelopeOpen, setIsEnvelopeOpen] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const audioRef = useRef<HTMLAudioElement>(null)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
-  const handleOpenEnvelope = () => {
-    setIsEnvelopeOpen(true)
-    // Intentar reproducir la musica cuando se abre el sobre
-    if (audioRef.current) {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true)
-      }).catch(() => {
-        // El navegador bloqueo la reproduccion automatica
-        console.log("[v0] Autoplay blocked by browser")
-      })
+function cleanFileName(name: string) {
+  return name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9.\-_]/g, "")
+    .toLowerCase()
+}
+
+export function PhotoShareForm() {
+  const [firstName, setFirstName] = useState("")
+  const [message, setMessage] = useState("")
+  const [photos, setPhotos] = useState<File[]>([])
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState("")
+  const [error, setError] = useState("")
+
+  function handlePhotosChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const selected = Array.from(event.target.files || [])
+
+    if (selected.length > 5) {
+      setError("Solo puedes subir máximo 5 fotos por carga.")
+      event.target.value = ""
+      setPhotos([])
+      return
     }
+
+    const invalidFile = selected.find((file) => !file.type.startsWith("image/"))
+
+    if (invalidFile) {
+      setError("Solo se permiten archivos de imagen.")
+      event.target.value = ""
+      setPhotos([])
+      return
+    }
+
+    setError("")
+    setPhotos(selected)
   }
 
-  const toggleMusic = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause()
-      } else {
-        audioRef.current.play()
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setError("")
+    setSuccess("")
+
+    if (!firstName.trim()) {
+      setError("Por favor ingresa tu nombre.")
+      return
+    }
+
+    if (photos.length === 0) {
+      setError("Debes seleccionar al menos una foto.")
+      return
+    }
+
+    if (photos.length > 5) {
+      setError("Solo puedes subir máximo 5 fotos por carga.")
+      return
+    }
+
+    try {
+      setLoading(true)
+
+      const batchId = crypto.randomUUID()
+      const uploadedPhotos: UploadedPhoto[] = []
+
+      for (const photo of photos) {
+        const safeName = cleanFileName(photo.name || "foto.jpg")
+        const filePath = `${batchId}/${Date.now()}-${safeName}`
+
+        const { error: uploadError } = await supabase.storage
+          .from("event-photos")
+          .upload(filePath, photo, {
+            contentType: photo.type,
+            upsert: false,
+          })
+
+        if (uploadError) {
+          throw new Error("No se pudo subir una de las fotos. Intenta nuevamente.")
+        }
+
+        const { data: publicUrlData } = supabase.storage
+          .from("event-photos")
+          .getPublicUrl(filePath)
+
+        uploadedPhotos.push({
+          url: publicUrlData.publicUrl,
+          path: filePath,
+          name: safeName,
+        })
       }
-      setIsPlaying(!isPlaying)
+
+      const { error: insertError } = await supabase
+        .from("photo_submissions")
+        .insert({
+          first_name: firstName.trim(),
+          message: message.trim() || null,
+          photos: uploadedPhotos,
+        })
+
+      if (insertError) {
+        throw new Error("Las fotos subieron, pero no se pudo guardar el registro.")
+      }
+
+      setSuccess("¡Gracias! Tus fotos fueron compartidas con los novios 🤍")
+      setFirstName("")
+      setMessage("")
+      setPhotos([])
+
+      const fileInput = document.getElementById("photos") as HTMLInputElement | null
+      if (fileInput) fileInput.value = ""
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ocurrió un error al subir las fotos.")
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <main className="min-h-screen relative overflow-hidden">
-      {/* Fondo con imagen estilo boda */}
-      <div
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/final-xCOTv0UGLMpmlVuFxfNWsMzSpUlM69.png')`,
-          filter: 'blur(8px) brightness(1.1)',
-          transform: 'scale(1.1)',
-        }}
-      />
-      {/* Overlay para legibilidad */}
-      <div className="fixed inset-0 bg-gradient-to-b from-white/85 via-white/80 to-white/85" />
-
-      {/* Audio player oculto */}
-      <audio ref={audioRef} src={WEDDING_CONFIG.songUrl} loop />
-
-      {/* Control de musica flotante */}
-      {isEnvelopeOpen && (
-        <AudioPlayer isPlaying={isPlaying} onToggle={toggleMusic} />
-      )}
-
-      {/* Sobre de la invitacion */}
-      {!isEnvelopeOpen && (
-        <Envelope
-          bride={WEDDING_CONFIG.bride}
-          groom={WEDDING_CONFIG.groom}
-          date={WEDDING_CONFIG.dateString}
-          onOpen={handleOpenEnvelope}
-        />
-      )}
-
-      {/* Contenido de la invitacion */}
-      {isEnvelopeOpen && (
-        <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          {/* Header con logo y fecha */}
-          <WeddingHeader
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-            date={WEDDING_CONFIG.dateString}
-            quote={WEDDING_CONFIG.biblicalQuote}
-            quoteReference={WEDDING_CONFIG.biblicalReference}
-          />
-
-          {/* Seccion de padres */}
-          <ParentsSection parents={WEDDING_CONFIG.parents} />
-
-          {/* Seccion de la pareja */}
-          <CoupleSection
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-            brideFullName={WEDDING_CONFIG.brideFullName}
-            groomFullName={WEDDING_CONFIG.groomFullName}
-            image={WEDDING_CONFIG.coupleImage}
-          />
-
-          {/* Calendario */}
-          <CalendarSection date={WEDDING_CONFIG.date} />
-
-          {/* Eventos: Misa y Recepcion */}
-          <EventsSection
-            ceremony={WEDDING_CONFIG.ceremony}
-            reception={WEDDING_CONFIG.reception}
-          />
-
-          {/* Itinerario */}
-          <ScheduleSection schedule={WEDDING_CONFIG.schedule} />
-
-          {/* RSVP - Confirmacion */}
-          <RsvpSection
-            whatsapp={WEDDING_CONFIG.whatsapp}
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
-
-          {/* Guardar fecha */}
-          <SaveDateSection
-            date={WEDDING_CONFIG.date}
-            ceremony={WEDDING_CONFIG.ceremony}
-            reception={WEDDING_CONFIG.reception}
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
-
-          {/* Mesa de regalos */}
-          <GiftsSection gifts={WEDDING_CONFIG.gifts} />
-
-          {/* Mensajes para los novios */}
-          <MessagesSection
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
-          />
-
-          {/* Footer */}
-          <WeddingFooter
-            bride={WEDDING_CONFIG.bride}
-            groom={WEDDING_CONFIG.groom}
+    <div className="max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-3xl p-6 md:p-8 shadow-lg border border-[#c9a45c]/20">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-[#5a4a3a] font-medium mb-2">
+            Nombre
+          </label>
+          <input
+            value={firstName}
+            onChange={(event) => setFirstName(event.target.value)}
+            placeholder="Escribe tu nombre"
+            className="w-full rounded-xl border border-[#c9a45c]/30 bg-white/80 px-4 py-3 text-[#5a4a3a] outline-none focus:border-[#c9a45c]"
           />
         </div>
-      )}
-    </main>
+
+        <div>
+          <label className="block text-[#5a4a3a] font-medium mb-2">
+            Mensaje
+          </label>
+          <textarea
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
+            placeholder="Escribe un mensaje para los novios"
+            rows={4}
+            className="w-full rounded-xl border border-[#c9a45c]/30 bg-white/80 px-4 py-3 text-[#5a4a3a] outline-none focus:border-[#c9a45c] resize-none"
+          />
+        </div>
+
+        <div>
+          <label className="block text-[#5a4a3a] font-medium mb-2">
+            Sube tus fotos
+          </label>
+
+          <div className="rounded-2xl border border-dashed border-[#c9a45c]/40 bg-[#faf8f5] p-5 text-center">
+            <input
+              id="photos"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handlePhotosChange}
+              className="block w-full text-sm text-[#5a4a3a] file:mr-4 file:rounded-full file:border-0 file:bg-[#c9a45c] file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-[#b8944c]"
+            />
+
+            <p className="mt-3 text-sm text-[#5a4a3a]/70">
+              Puedes subir máximo 5 fotos por carga. Si quieres compartir más, puedes enviar otro formulario.
+            </p>
+
+            {photos.length > 0 && (
+              <p className="mt-3 font-medium text-[#5a4a3a]">
+                {photos.length} foto(s) seleccionada(s)
+              </p>
+            )}
+          </div>
+        </div>
+
+        {error && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-600">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-green-700">
+            {success}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full rounded-full bg-[#c9a45c] px-6 py-4 text-lg font-medium text-white transition hover:bg-[#b8944c] disabled:opacity-70"
+        >
+          {loading ? "Subiendo fotos..." : "Compartir con los novios"}
+        </button>
+      </form>
+    </div>
   )
 }

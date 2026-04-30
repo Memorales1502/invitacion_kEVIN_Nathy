@@ -137,6 +137,7 @@ export const GUESTS: Guest[] = [
   { name: "Cecilia Mejía", slug: "cecilia-mejia", passes: 1 },
   { name: "Amparo Cifuentes", slug: "amparo-cifuentes", passes: 2 },
   { name: "Carlos Cifuentes", slug: "carlos-cifuentes", passes: 2 },
+  { name: "Eduardo López", slug: "eduardo-lopez", passes: 3 },
   
   
   
